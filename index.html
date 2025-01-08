@@ -1,0 +1,335 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solbot-AI</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+    <link rel="shortcut icon" href="/Logo.png" type="image/x-icon">
+    <style>
+        /* Base Styling */
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        #terminal {
+            width: 80%;
+            max-width: 800px;
+            background: black;
+            padding: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 0 10px rgba(153, 69, 255, 0.5);
+        }
+        .cursor {
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background-color: #9945FF;
+            animation: blink 0.4s steps(2, start) infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        /* Social Links and Other Elements */
+        .jiji {
+            height: auto; 
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: baseline;
+            flex-direction: row;
+            right: 0;
+            margin-bottom: -2rem;
+        }
+        .jiji a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        .logx, .gygy, .dede {
+            position: absolute;
+        }
+        .logx {
+            /* Links removed from here */
+        }
+        .gygy {
+            height: 100px; 
+            top: 0;
+            margin: 40px;
+        }
+        .dede {
+            height: 200px;
+            top: 0;
+            left: 0;
+        }
+        /* Modal Styling */
+        #agent-builder-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .agent-builder-container {
+            background: #1a1a1a;
+            border: 2px solid #9945FF;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            height: 90%;
+            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(153, 69, 255, 0.5);
+            position: relative;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            color: #9945FF;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 20px;
+            color: #9945FF;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group button {
+            padding: 10px 20px;
+            background: #9945FF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-group button:hover {
+            background: #aa66ff;
+        }
+        .agent-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #292929;
+            border-radius: 5px;
+        }
+        .agent-item h3 {
+            margin: 0;
+            color: #9945FF;
+        }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 2px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #9945FF;
+            border-radius: 5px;
+        }
+        /* Media Queries for Responsiveness */
+        @media screen and (max-width: 600px) {
+            #terminal {
+                overflow-y: scroll;
+                max-height: 67vh;
+            }
+            .jiji {
+                flex-direction: column;
+                height: 100px; 
+                width: 80%;
+                text-align: center;
+            }
+            .jiji a {
+                font-size: 18px;
+                line-height: 18px;
+            }
+            .dede {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Model Viewer Section -->
+    <div class="dede">
+        <model-viewer style="height: 100px; width:100px; margin: 10px; background-color: transparent;" auto-rotate camera-controls ar src="./ecoai.glb">
+        </model-viewer>
+    </div>
+
+    <!-- Social Links Upper Right Removed -->
+    <div class="logx">
+        <!-- Links removed as per request -->
+    </div>
+
+    <!-- Deployment Status -->
+    <div class="gygy">
+        <p>CA: Deploying...</p>
+    </div>
+
+    <!-- Terminal Section -->
+    <div id="terminal"></div>
+
+    <!-- Footer Links -->
+    <div class="jiji">
+        <a href="#" id="open-agent-builder">AI Agent Builder</a>
+        <a target="_blank" href="https://t.me/+D8FRF0d0Mic0MzU0">TG Chat</a>
+    </div>
+
+    <!-- Agent Builder Modal -->
+    <div id="agent-builder-modal">
+        <div class="agent-builder-container">
+            <div class="close-button" id="close-agent-builder">&times;</div>
+            <h1 style="text-align: center;">Agent Builder</h1>
+            <div id="agent-form">
+                <div class="form-group">
+                    <label for="agentName">Agent Name</label>
+                    <input type="text" id="agentName" placeholder="Enter agent name">
+                </div>
+                <div class="form-group">
+                    <label for="agentDescription">Description</label>
+                    <textarea id="agentDescription" rows="3" placeholder="Enter agent description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="agentPrompt">System Prompt</label>
+                    <textarea id="agentPrompt" rows="5" placeholder="Enter agent system prompt"></textarea>
+                </div>
+                <button id="addAgentButton">Add Agent</button>
+            </div>
+            <div id="agentItems" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Typing animation for terminal
+        const terminal = document.getElementById('terminal');
+        const text = `
+Solbot-AI Activated. Welcome to the future of intelligent solutions.
+
+Our vision: Leverage AI and blockchain to revolutionize the industry, foster innovation, and drive sustainable growth.
+
+Phase 1: Building the Foundation
+Developing a robust ecosystem powered by AI agents that streamline processes, enhance decision-making, and reduce operational costs.
+
+Phase 2: Expansion & Integration
+Collaborating with partners and stakeholders to integrate AI-driven solutions across various sectors, ensuring seamless adoption and impactful outcomes.
+
+Phase 3: Transformation & Growth
+Continuously evolving our AI agents and infrastructure to adapt to changing market demands, fostering long-term growth and prosperity.
+
+Join us on this journey as we pave the way for a smarter, more connected future.
+
+CA: Deploying...
+`;
+        let i = 0;
+        const speed = 30;
+        function typeText() {
+            if (i < text.length) {
+                const char = text[i] === '\n' ? '<br>' : text[i];
+                terminal.innerHTML += char;
+                i++;
+                setTimeout(typeText, speed);
+            } else {
+                terminal.innerHTML += '<span class="cursor"></span>';
+            }
+        }
+        typeText();
+
+        // Agent Builder Modal Logic
+        const openAgentBuilderButton = document.getElementById('open-agent-builder');
+        const closeAgentBuilderButton = document.getElementById('close-agent-builder');
+        const agentBuilderModal = document.getElementById('agent-builder-modal');
+        const agentNameInput = document.getElementById('agentName');
+        const agentDescriptionInput = document.getElementById('agentDescription');
+        const agentPromptInput = document.getElementById('agentPrompt');
+        const addAgentButton = document.getElementById('addAgentButton');
+        const agentItems = document.getElementById('agentItems');
+
+        const agents = JSON.parse(localStorage.getItem('agents')) || {};
+
+        openAgentBuilderButton.addEventListener('click', () => {
+            agentBuilderModal.style.display = 'flex';
+        });
+        closeAgentBuilderButton.addEventListener('click', () => {
+            agentBuilderModal.style.display = 'none';
+        });
+
+        function addAgent(name, description, sysprompt) {
+            if (agents[name]) {
+                alert(`Agent "${name}" already exists. Choose a different name.`);
+                return false;
+            }
+            agents[name] = { description, sysprompt };
+            saveAgents();
+            renderAgents();
+            alert(`Agent "${name}" created successfully.`);
+            return true;
+        }
+
+        function saveAgents() {
+            localStorage.setItem('agents', JSON.stringify(agents));
+        }
+
+        function renderAgents() {
+            agentItems.innerHTML = '';
+            for (const [name, agent] of Object.entries(agents)) {
+                const agentDiv = document.createElement('div');
+                agentDiv.className = 'agent-item';
+                agentDiv.innerHTML = `
+                    <h3>${name}</h3>
+                    <p><strong>Description:</strong> ${agent.description}</p>
+                    <p><strong>System Prompt:</strong></p>
+                    <pre>${agent.sysprompt}</pre>
+                `;
+                agentItems.appendChild(agentDiv);
+            }
+        }
+
+        addAgentButton.addEventListener('click', () => {
+            const name = agentNameInput.value.trim();
+            const description = agentDescriptionInput.value.trim();
+            const sysprompt = agentPromptInput.value.trim();
+
+            if (!name || !description || !sysprompt) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            addAgent(name, description, sysprompt);
+
+            agentNameInput.value = '';
+            agentDescriptionInput.value = '';
+            agentPromptInput.value = '';
+        });
+
+        renderAgents();
+    </script>
+</body>
+</html>
