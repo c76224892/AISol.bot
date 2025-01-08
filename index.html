@@ -36,6 +36,15 @@
     a:hover {
       text-decoration: underline;
     }
+    .jiji a {
+      font-size: 24px; /* Larger font size */
+      border: 1px solid transparent;
+      padding: 5px 10px;
+    }
+    .jiji a:hover {
+      border: 1px solid #9945FF;
+      border-radius: 5px;
+    }
 
     /* Hacker Thematic Background Animation */
     body::before {
@@ -108,15 +117,6 @@
       right: 0;
       margin-bottom: -2rem;
       z-index: 1;
-    }
-    .jiji a {
-      font-size: 20px;
-      border: 1px solid transparent;
-      padding: 5px 10px;
-    }
-    .jiji a:hover {
-      border: 1px solid #9945FF;
-      border-radius: 5px;
     }
 
     .logx, .gygy, .dede {
@@ -225,9 +225,7 @@
   </div>
 
   <!-- Social Links Upper Right Removed -->
-  <div class="logx">
-    <!-- Links removed as per request -->
-  </div>
+  <div class="logx"></div>
 
   <!-- Deployment Status -->
   <div class="gygy">
@@ -276,10 +274,8 @@ Join us as we transform the Solana ecosystem into a seamless, low-cost, high-spe
 
 CA: Deployment imminent... Standby for launch!
 `;
-
     let i = 0;
     const speed = 30;
-
     function typeText() {
       if (i < text.length) {
         const char = text[i] === '\n' ? '<br>' : text[i];
@@ -292,7 +288,7 @@ CA: Deployment imminent... Standby for launch!
     }
     typeText();
 
-    // "Coming Soon" Modal Logic
+    // Modal Logic
     const openAgentBuilderButton = document.getElementById('open-agent-builder');
     const closeAgentBuilderButton = document.getElementById('close-agent-builder');
     const agentBuilderModal = document.getElementById('agent-builder-modal');
